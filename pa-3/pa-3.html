@@ -33,7 +33,7 @@
       </center>
       <br>
       <p style="text-align:center;">
-        <img src="/images/sim_img.png" alt="Simulator image" width="750" height="400"> 
+        <img src="./images/sim_img.png" alt="Simulator image" width="750" height="400"> 
       </p>
       <p>In this assignment you will be doing...blah...blah...blah. Are you tired of this opening of assignments? Let's try with a different one. <br><br> Are YOU tired of missing shots while playing billiards? Do YOU want to beat Ronnie O' Sullivan in billiards? Then this assignment is an opportunity in disguise, wherein you get to make your own agent that is able to perform optimally in the game of billiards! </p>
 
@@ -44,7 +44,7 @@
 To access the assignment, clone <a href="https://github.com/Harsh-Sensei/CS747-PA3">this</a> github repo
  (or download compressed directory). The repo consists of the entire code required for this assignment. After cloning/extracting you should be able to get this directory structure:
  <p style="text-align:left;">
-  <img src="/images/code_structure.png" alt="Code Structure" height="auto" width="30%"> 
+  <img src="./images/code_structure.png" alt="Code Structure" height="auto" width="30%"> 
 </p>
 Look up, "Running the Code" section to get the simulator running. 
 You only have to modify and submit agent.py file for this assignment. The directory <code>traces</code> will consist of trace files of your actions, if you wish to store (more details in "Command-line arguments"). 
@@ -309,8 +309,6 @@ The simulation runs with a default seed of 73. You can test your agent with diff
 <p> <b>--generate-stats</b>: to print stats related to the simulation, like mean tries, total time, etc.</p>
 
 
-
-
 <h3>Running the Code </h3>
 <p>In order to run the code, follow the below steps, 
 <ol>
@@ -331,7 +329,8 @@ The simulation runs with a default seed of 73. You can test your agent with diff
       <p>6 marks have been reserved for the public testcases (levels). 6 more marks have been reserved for the hidden testcases which will be similar to the public ones. The final 3 marks have been reserved for your report. (6+6+3=15)</p>
 
       <p>Both the public and private test cases have 10 levels. Marks of each level is described in the marking scheme.</p>
-
+      <p>We will be running your code with the command : <code>python main.py --level-all --seed [hidden] </code></p>
+      <p><b>(Important) Please make sure your simulation runnning time for all the 10 public levels do not exceed 900 secs. Check the total simulation time by <code>--generate-stats</code> command line argument</b></p>
       <p>Unlike the previous assignments, you have been given a free hand to come up with your agent. Hence, we would like to see a clear presentation of your approach. 
         For unique and successful approaches, we don't mind requesting the professor for bonus marks ;).<br> 
         Include a file named <code>report.pdf</code> that spells out the ingredients of your solution, any intermediate experiments that may have guided your decisions,
