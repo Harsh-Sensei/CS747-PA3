@@ -51,8 +51,7 @@ class TableColoring(pygame.sprite.Sprite):
         self.rect.topleft = (0, 0)
         self.font = config.get_default_font(config.ball_radius)
         # generates text at the bottom of the table
-        self.target_ball_text = [self.font.render(config.player1_target_text, False, config.player1_cue_color),
-                                 self.font.render(config.player2_target_text, False, config.player2_cue_color)]
+        self.target_ball_text = [self.font.render(config.player1_target_text, False, config.player1_cue_color)]
 
     def redraw(self):
         self.image.fill(config.table_side_color)
@@ -73,7 +72,6 @@ class TableColoring(pygame.sprite.Sprite):
             start_y = config.resolution[1] - config.table_margin - self.font.size(config.player1_target_text)[1] / 2
             # the text needs to be moved a bit lower to keep it aligned
             self.image.blit(self.target_ball_text[0], [start_x[0], start_y + config.ball_radius / 2])
-            self.image.blit(self.target_ball_text[1], [start_x[1], start_y + config.ball_radius / 2])
             start_x += self.font.size(config.player2_target_text)[0]
             for ball in game_state.balls:
                 do_draw = ball.number != 0 and ball.number != 8
@@ -105,12 +103,9 @@ class TableColoring(pygame.sprite.Sprite):
         top_left_text = ""
         if game_state.can_move_white_ball:
             top_left_text += config.penalty_indication_text
-        if game_state.current_player.value == 1:
-            top_left_rendered_text = self.font.render(config.player1_turn_label + top_left_text,
+            
+        top_left_rendered_text = self.font.render(top_left_text + f"Level : {config.curr_level}" ,
                                                       False, config.player1_cue_color)
-        else:
-            top_left_rendered_text = self.font.render(config.player2_turn_label + top_left_text,
-                                                      False, config.player2_cue_color)
         text_pos = [config.table_margin + config.hole_radius * 3,
                     config.table_margin - self.font.size(top_left_text)[1] / 2]
         self.image.blit(top_left_rendered_text, text_pos)

@@ -1,1 +1,1 @@
-folder for traces
+Folder for storing traces of the simulation

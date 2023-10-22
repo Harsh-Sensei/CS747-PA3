@@ -15,8 +15,8 @@ def parser():
     parser.add_argument('--no-render', action='store_true')
     parser.add_argument('--generate-traces', action='store_true')
     parser.add_argument('--generate-stats', action='store_true')
+    parser.add_argument('--debug', action='store_true')
     parser.add_argument('--level-all', action='store_true')
-    parser.add_argument('--agent-score', action='store_true')
     parser.add_argument('--level-x', type=int, default=0)
     parser.add_argument('--seed', type=int, default=73)
     parser.add_argument('--trace-file-prefix', type=str, default="traces/trace")
@@ -31,7 +31,6 @@ if __name__ == "__main__":
     numpy.random.seed(args.seed)
     start_time = 0
     levels_passed = 0
-    score = 0
     marks = 0
     
     events = {"closed" : False, "quit_to_main_menu" : False}
@@ -47,6 +46,7 @@ if __name__ == "__main__":
         num_runs = config.num_levels
         print(f"Running the agent on {num_runs} runs")
         for eps in range(num_runs):
+            config.curr_level = eps
             curr_tries = 0
             frame_num = 0
             print("MAX_TRIES :", MAX_TRIES[eps])
@@ -80,13 +80,12 @@ if __name__ == "__main__":
 
                         if not args.no_render:
                             events = event.events()
-                        game.cue.cue_is_active(game, events, not args.no_render)
+                        game.cue.cue_is_active(game, events, not args.no_render, args.debug)
                         curr_tries += 1
 
             if game.is_game_over:
                 num_tries_arr.append(curr_tries)
                 if not (curr_tries > MAX_TRIES[eps]):
-                    score += max(0, min(10 - curr_tries, 0) - game.num_white_pots + 3*(config.total_ball_num[eps] - 1))
                     marks += MARKS[eps]
                     levels_passed += 1
                     print(f"Level {eps} passed")
@@ -115,15 +114,14 @@ if __name__ == "__main__":
             print(stats)
             
         print(f"#### Levels passed : {levels_passed} out of {num_runs} ####")
-        print(f"#### Marks : {marks} out of {sum(MARKS)} ####")
-        if args.agent_score:
-            print(f"#### Agent Score : {score} ####")
+        print(f"#### Marks : {int(marks*10)/10} out of {sum(MARKS)} ####")
 
     else:
-        assert args.level_x <= config.num_levels and args.level_x >= 0, "Invalid level chosen"
+        assert args.level_x < config.num_levels and args.level_x >= 0, "Invalid level chosen"
         MAX_TRIES = 30 - 2*args.level_x
         num_tries_arr = []
         eps = args.level_x
+        config.curr_level = eps
         num_runs = 1
         curr_tries = 0
         frame_num = 0
@@ -160,7 +158,7 @@ if __name__ == "__main__":
 
                     if not args.no_render:
                         events = event.events()
-                    game.cue.cue_is_active(game, events, not args.no_render)
+                    game.cue.cue_is_active(game, events, not args.no_render, args.debug)
                     curr_tries += 1
 
         if game.is_game_over:

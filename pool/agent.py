@@ -5,6 +5,8 @@ import json
 import math
 import utils
 import time
+import config
+import numpy
 random.seed(73)
 
 class Agent:
@@ -26,7 +28,8 @@ class Agent:
 
     def action(self, ball_pos=None):
         ## Code you agent here ##
-        ## You can define other function in this file, but do not create other files
-        ## Access the parameters of the simulation from config.py (do not change ady)
-        
+        ## You can access data from config.py for geometry of the table, configuration of the levels, etc.
+        ## You are NOT allowed to change the variables of config.py (we will fetch variables from a different file during evaluation)
+        ## Do not use any library other than those that are already imported.
+        ## Try out different ideas and have fun!
         return (2*random.random() - 1, random.random())

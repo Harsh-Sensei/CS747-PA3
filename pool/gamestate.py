@@ -235,10 +235,6 @@ class GameState:
         if not self.turn_ended:
             self.turn_ended = True
             self.turn_number += 1
-            # if self.current_player == Player.Player1:
-            #     self.current_player = Player.Player1
-            # else:
-            #     self.current_player = Player.Player1
         if penalize:
             self.can_move_white_ball = False
 

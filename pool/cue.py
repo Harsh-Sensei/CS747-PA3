@@ -110,16 +110,14 @@ class Cue(pygame.sprite.Sprite):
     def make_invisible(self):
         self.visible = False
 
-    def cue_is_active(self, game_state, events, render=True, action_for_next_state=None, seed=0):
-        initial_mouse_dist = 0
-        self.update_cue(game_state, initial_mouse_dist, events, action_for_next_state, seed)
+    def cue_is_active(self, game_state, events, render=True, action_for_next_state=None, seed=0, debug=False):
+        self.update_cue(game_state, action_for_next_state, seed, debug)
 
         # undraw leftover aiming lines
         if render:
             self.draw_lines(game_state, self.target_ball, self.angle +
                             math.pi, config.table_color)
 
-        # if self.displacement > config.ball_radius+config.cue_safe_displacement:
         self.ball_hit()
 
     def ball_hit(self):
@@ -134,14 +132,14 @@ class Cue(pygame.sprite.Sprite):
         self.displacement = config.ball_radius
         self.visible = False
 
-    def update_cue(self, game_state, initial_mouse_dist, events, action_temp, seed):
+    def update_cue(self, game_state, action_temp, seed, debug):
         # updates cue position
         state = {elem.number : (elem.ball.pos[0], elem.ball.pos[1]) for i, elem in enumerate(game_state.balls)}
         state["white"] = (self.target_ball.ball.pos[0], self.target_ball.ball.pos[1])
         if self.curr_iter > 0: 
             self.trace_dict[self.curr_iter] = {"action" : [self.agent_angle, self.agent_dis], "state" : state}
         self.curr_iter += 1
-
+        
         if game_state.next_state_function:
             angle = action_temp[0]
             dis = action_temp[1]
@@ -164,13 +162,13 @@ class Cue(pygame.sprite.Sprite):
         error_var = dis
         if game_state.next_state_function:
             rng = np.random.default_rng(int(seed))
-            error = (np.pi/180)*np.clip(rng.normal(0,1.5*error_var), -2.5, 2.5)
+            error = (np.pi/180)*np.clip(rng.normal(0, error_var), -2.5, 2.5) if debug == False else 0
         else:
-            error = (np.pi/180)*np.clip(np.random.normal(0, error_var), -2.5, 2.5)
-            
+            error = (np.pi/180)*np.clip(np.random.normal(0, error_var), -2.5, 2.5) if debug == False else 0
+        
         self.displacement = (config.cue_max_displacement - config.ball_radius) * dis + config.ball_radius
         self.angle = angle * math.pi + error
-        
+
         game_state.redraw_all(update=False)
         if game_state.render :
             self.draw_lines(game_state, self.target_ball, prev_angle +
@@ -180,7 +178,6 @@ class Cue(pygame.sprite.Sprite):
         pygame.display.flip()
 
     def save_trace_dict(self, filename="trace.json"):
-        print("Max time :", self.max_time)
         with open(filename, "w") as f:
             json.dump(self.trace_dict, f)
         

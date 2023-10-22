@@ -20,7 +20,7 @@
       <title>CS 747: Programming Assignment 3 </title>
 </head>
 
-<body data-new-gr-c-s-check-loaded="14.1073.0" data-gr-ext-installed="">
+<body>
       <br>
 
       <center>
@@ -79,12 +79,21 @@ and there is only one type of ball (solids)...not even 8 ball. If you pot the cu
 and rest of the board state remains unchanged. There are levels cooked by our chefs (TAs), and each level has a 
 pre-defined maximum times you can hit the cue ball. In order to pass a level you need to pot all the colored balls within the maximum
 tries limit. <br>
+
+<h4>How collisions are resolved? </h4>
+When a ball A collides with another stationary ball B, the velocity of the ball B (assuming elastic collision) is the component of 
+velocity of B along the line joining the centres of the two balls (see the figure given below). Note that this is because all the balls (including the cue ball) are identical except their color.
+As mentioned before, you are given access to the geometry of balls and table in <code>config.py</code>. The radius of balls is also stored in <code>self.ball_radius</code> of <code>class Agent</code>.
+<p style="text-align:left;">
+    <img src="./images/pool_physics.png" alt="source : https://www.real-world-physics-problems.com/physics-of-billiards.html" width="auto" height="60%"> 
+</p>
+
 The configuration of the table can be found in <code>config.py</code> file of the given directory. You are allowed to access any
 variables of <code>config.py</code> but not modify them (0 marks if we find any such case). <code>pygame</code> is used for the simulation
 the game. Some details regarding how the simulation works:
 <ol>
 <li>In main.py, after game initialization, it is checked whether the board is stationary or not (game.all_not_moving())</li>
-<li>If the game state is stationary, then a action is drawn from your agent using calls to cue (game.cue.cue_is_active) </li>
+<li>If the game state is stationary, then a action is drawn from your agent using calls to cue (game.cue.cue_is_active). The <code>action()</code> function of your agent is called in this function to fetch the (angle, force) pair.</li>
 <li>After the force and angle is provided by agent, the simulator makes incremental updates to the states, and checks for collisions/ball pots at each increment (collisions.resolve_all_collisions)</li>
 <li>Due friction, the balls stop moving after some iterations and the next action is fetched from the agent</li>
 </ol>    
@@ -152,17 +161,18 @@ balls are stationary, these are not given to the agent.</p>
   Force is a direct indicative of the initial speed of the cue ball, with 1 representing the maximum force and 0 being the minimum. You would not want to give an unnecesarily high force due to an increased random error term in the angle, resulting from a high force. </p>
 
 <p><b>Error in angle</b> : In order to mimic real scenarios where high force to cue ball cultivates to less control, we add noise to the angle provided by the agent. Hence, final_angle = angle_provided + error<br>
-Here, error ~ N(mean = 0; var = increasingfunc(F)), where F is the force provided by the agent</p>
+Here, error ~ N(mean = 0; var = increasingfunc(F)), where F is the force provided by the agent. (can look into <code>update_cue()</code> in <code>cue.py</code>)</p>
 
 <h4>Levels</h4>
-The game proceeds in a level format. There are 10 public levels. Each level has a different configuration of the initial board in terms of both the number of balls as well as their positions. 
+The game proceeds in a level format. There are 10 public levels. Each level has a different configuration of the initial board in terms of both the number of balls as well as their positions. You can find the configuration of each level 
+in <code>config.py</code>, which are public levels. While evaluation, we will add another 10 levels (private levels), which will have configurations similar to the public levels with minor differences in ball positions.
 The goal is to pot all the balls within a given max_tries, specific to the level. As the level progresses the max tries is decreased by 2, starting from 30 for level 0. An example output is of the form: </p>
 <code>
   <pre>
     Running the agent on 1 runs
     MAX_TRIES : 22
     Level 4 passed
-    Tries : 14 ; Score : 4
+    Tries : 14
 
     #### Levels passed : 1 out of 1 ####
   </pre>
@@ -243,8 +253,11 @@ The goal is to pot all the balls within a given max_tries, specific to the level
 <h4>Other Utilities</h4>
 
 <p><b>Next state</b> : We have provided a get_next_state() function in <code>utils.py</code> which can be used by by callin <code>self.ns.get_next_state()</code>. The function takes three arguments - state, action and a random seed (for deterministic error).
-   The function returns the next state based on the action and the current state provided, without running on the actual simulation.
-   Hence, the agent can try any arbitrary action on any arbitrary state to fetch the next state and then decide which action to choose and return.</p>
+   The function returns the next state based on the action and the current state provided, without running on the actual simulation. 
+   Hence, the agent can try any arbitrary action on any arbitrary state to fetch the next state and then decide which action to choose and return. <br>
+    The number of calls you can make to this function in one second depends heavily on your computer systems, but it is approximately <b>4-5</b> calls per second. 
+    Given the total simulation time limit as 1000 seconds (also explained later in "Evaluation" section) you can approximately make <b>15-20</b> calls to <code>self.ns.get_next_state()</code> in your agent
+    before deciding your action. The numbers are only tentative and not strict</p>
 
 <p><b>Traces</b> : Using the --generate-traces command line argument, your actions and corresponding next state is recorded and saved in the traces directory as a JSON. This can be used for generating the dataset for training your agent from the trace files. Eg of a trace file:</p>
 <code>
@@ -302,11 +315,13 @@ The simulation runs with a default seed of 73. You can test your agent with diff
 
 
 <h3>Command-line arguments</h3>
-<p> <b>--level-x n</b>: will run particular level n.</p>
-<p> <b>--level-all</b>: will run all levels in a sequential manner</p>
-<p> <b>--generate-traces</b>: will save a trace file of each action taken and the correspondding next state</p>
-<p> <b>--no-render</b>: will not display the graphics of the simulation</p>
+<p> <b>--level-x n</b> : will run particular level n.</p>
+<p> <b>--level-all</b> : will run all levels in a sequential manner</p>
+<p> <b>--generate-traces</b> : will save a trace file of each action taken and the correspondding next state</p>
+<p> <b>--no-render</b> : will not display the graphics of the simulation, </p>
 <p> <b>--generate-stats</b>: to print stats related to the simulation, like mean tries, total time, etc.</p>
+<p> <b>--debug</b> : the simulator will not add noise to the angle provided by agent. Only for the purpose of debugging</p>
+
 
 
 <h3>Running the Code </h3>
@@ -329,8 +344,8 @@ The simulation runs with a default seed of 73. You can test your agent with diff
       <p>6 marks have been reserved for the public testcases (levels). 6 more marks have been reserved for the hidden testcases which will be similar to the public ones. The final 3 marks have been reserved for your report. (6+6+3=15)</p>
 
       <p>Both the public and private test cases have 10 levels. Marks of each level is described in the marking scheme.</p>
-      <p>We will be running your code with the command : <code>python main.py --level-all --seed [hidden] </code></p>
-      <p><b>(Important) Please make sure your simulation runnning time for all the 10 public levels do not exceed 900 secs. Check the total simulation time by <code>--generate-stats</code> command line argument</b></p>
+      <p>We will be running your code with the command : <code>python main.py --level-all --no-render --seed [hidden] </code></p>
+      <p><b>(Important) Please make sure your simulation runnning time for all the 10 public levels do not exceed 1000 secs. Check the total simulation time by <code>--generate-stats</code> command line argument</b></p>
       <p>Unlike the previous assignments, you have been given a free hand to come up with your agent. Hence, we would like to see a clear presentation of your approach. 
         For unique and successful approaches, we don't mind requesting the professor for bonus marks ;).<br> 
         Include a file named <code>report.pdf</code> that spells out the ingredients of your solution, any intermediate experiments that may have guided your decisions,
@@ -344,15 +359,6 @@ The simulation runs with a default seed of 73. You can test your agent with diff
 
 <h3>Deadline and Rules</h3>
 To be discussed
-
-<h3>Bonus</h3>
-Lets see how much you know yourself!<br>
-Aside from the marks that you get in the assignment, your agent will also be given a score. All the submissions will be ranked according
-to the score of the agent (ties broken using roll number), and you will be given a chance to guess your rank. If your guess lies in the range +-5 of 
-your actual rank, you will receive an extra mark! Yes, you heard me right, 1 mark for your accurate guess. A form will be floated later for the same to accumulate your guesses.<br>
-Know your agent score using <b>--agent-score</b> command line argument to main.py.<br>
-Eg 1: Actual rank = 17; Guessed rank = 22  -> Correct guess (1 bonus mark awarded)<br>
-Eg 2: Actual rank = 17; Guessed rank = 24  -> Incorrect guess (0 bonus mark awarded)
 
 <center>
   <h2>
