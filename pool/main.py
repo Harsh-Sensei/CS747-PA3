@@ -183,8 +183,8 @@ if __name__ == "__main__":
         if args.generate_stats:
             stats["mean_tries"] = sum(num_tries_arr) / len(num_tries_arr) if len(num_tries_arr) != 0 else 0
             stats["total_simulation_time"] = time_elapsed
-            stats["average_episode_time"] = time_elapsed / (eps + 1)
-            stats["number_episodes_played"] = eps + 1
+            stats["average_episode_time"] = time_elapsed / (1)
+            stats["number_episodes_played"] = 1
             print(stats)
             
         print(f"#### Levels passed : {levels_passed} out of {num_runs} ####")
