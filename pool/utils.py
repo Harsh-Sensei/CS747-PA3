@@ -37,7 +37,7 @@ class NextState:
                 while not (
                     (events["closed"] or events["quit_to_main_menu"]) or self.speculative_gamestate.is_game_over) and self.speculative_gamestate.all_not_moving():
                     
-                    self.speculative_gamestate.cue.cue_is_active(self.speculative_gamestate, events, 0, action, seed)
+                    self.speculative_gamestate.cue.cue_is_active(self.speculative_gamestate, events, 0, action, seed, debug=config.debug)
                     ret_state = {elem.number : (elem.ball.pos[0], elem.ball.pos[1]) for i, elem in enumerate(self.speculative_gamestate.balls)}
                     ret_state["white"] = (self.speculative_gamestate.cue.target_ball.ball.pos[0], self.speculative_gamestate.cue.target_ball.ball.pos[1])
                     self.speculative_gamestate.state = ret_state

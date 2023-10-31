@@ -38,6 +38,8 @@ if __name__ == "__main__":
     
     MARKS = [0.4]*3 + [0.6]*4 + [0.8]*3
     
+    config.debug = args.debug
+    
     if args.level_all:
         MAX_TRIES = list(range(30, 30 - 2*config.num_levels, -2))
         print(MAX_TRIES)
@@ -80,7 +82,7 @@ if __name__ == "__main__":
 
                         if not args.no_render:
                             events = event.events()
-                        game.cue.cue_is_active(game, events, not args.no_render, args.debug)
+                        game.cue.cue_is_active(game, events, not args.no_render, debug=args.debug)
                         curr_tries += 1
 
             if game.is_game_over:
@@ -158,7 +160,7 @@ if __name__ == "__main__":
 
                     if not args.no_render:
                         events = event.events()
-                    game.cue.cue_is_active(game, events, not args.no_render, args.debug)
+                    game.cue.cue_is_active(game, events, not args.no_render, debug=args.debug)
                     curr_tries += 1
 
         if game.is_game_over:
