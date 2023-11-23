@@ -18,7 +18,7 @@ def parser():
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--level-all', action='store_true')
     parser.add_argument('--level-x', type=int, default=0)
-    parser.add_argument('--seed', type=int, default=73)
+    parser.add_argument('--seed', type=int, default=169)
     parser.add_argument('--trace-file-prefix', type=str, default="traces/trace")
 
     return parser.parse_args()
@@ -33,6 +33,7 @@ if __name__ == "__main__":
     levels_passed = 0
     marks = 0
     
+    config.seed = args.seed
     events = {"closed" : False, "quit_to_main_menu" : False}
     stats = {"mean_tries" : 0, "total_simulation_time" : 0, "average_episode_time" : 0, "number_episodes_played" : 0}
     

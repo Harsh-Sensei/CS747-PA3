@@ -31,6 +31,7 @@ class Cue(pygame.sprite.Sprite):
         self.max_time = -1
         self.agent_angle = None
         self.agent_dis = None
+        self.rng = np.random.default_rng(int(config.seed))
 
     def clear_canvas(self):
         # create empty surface as a placeholder for the cue
@@ -164,7 +165,7 @@ class Cue(pygame.sprite.Sprite):
             rng = np.random.default_rng(int(seed))
             error = (np.pi/180)*np.clip(rng.normal(0, error_var), -2.5, 2.5) if debug == False else 0
         else:
-            error = (np.pi/180)*np.clip(np.random.normal(0, error_var), -2.5, 2.5) if debug == False else 0
+            error = (np.pi/180)*np.clip(self.rng.normal(0, error_var), -2.5, 2.5) if debug == False else 0
         
         self.displacement = (config.cue_max_displacement - config.ball_radius) * dis + config.ball_radius
         self.angle = angle * math.pi + error
